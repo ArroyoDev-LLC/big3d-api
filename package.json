@@ -1,0 +1,22 @@
+{
+  "name": "big3d-api",
+  "version": "1.0.0",
+  "description": "Big3D Backend Api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArroyoDev-LLC/big3d-api.git"
+  },
+  "author": "BradenM <bradenmars@bradenmars.me>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArroyoDev-LLC/big3d-api/issues"
+  },
+  "homepage": "https://github.com/ArroyoDev-LLC/big3d-api#readme",
+  "dependencies": {
+    "serverless": "^2.53.1"
+  }
+}
