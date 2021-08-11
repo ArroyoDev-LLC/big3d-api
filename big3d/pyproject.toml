@@ -5,7 +5,7 @@ description = "Big3D Serverless Api"
 authors = ["Braden Mars <bradenmars@bradenmars.me>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8,<3.10"
 pynamodb = "^5.1.0"
 boto3 = "^1.18.18"
 pydantic = "^1.8.2"
@@ -15,11 +15,14 @@ loguru = "^0.5.3"
 autoflake = "^1.4"
 flake8 = "^3.9.2"
 isort = "^5.9.3"
-black = "^21.7b0"
 pre-commit = "^2.14.0"
 pdbpp = "^0.10.3"
 mypy = { version = "^0.910", extras = ["dmypy"] }
 typing-extensions = "^3.10.0"
+# This is listed as a dev-dep b/c it is provided
+# via the base Dockerfile and seems to have issues
+# installing as normal.
+threedframe = {git = "https://github.com/arroyodev-llc/3dframe.git"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
