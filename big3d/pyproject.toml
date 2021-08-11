@@ -1,0 +1,23 @@
+[tool.black]
+line-length = 100
+skip-string-normalization = false
+target-version = ['py38']
+include = '\.pyi?$'
+exclude = '''/(\.eggs|\.mpy_cache|\.direnv|build|dist|snippets)/'''
+
+[tool.isort]
+profile = "black"
+src_paths = ["."]
+line_length = 100
+honor_noqa = true
+
+[tool.pydantic-mypy]
+warn-untyped-fields = true
+
+[tool.pydantic-pycharm-plugin]
+ignore-init-method-arguments = true
+
+[tool.mypy]
+plugins = "pydantic.mypy"
+disallow_untyped_defs = true
+follow_imports = "normal"
