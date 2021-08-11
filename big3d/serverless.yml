@@ -21,8 +21,10 @@ provider:
 
 functions:
   hello:
-    handler: handler.hello
+    image:
+      name: big3d-api
     events:
       - http:
           path: /
           method: get
+          cors: true
