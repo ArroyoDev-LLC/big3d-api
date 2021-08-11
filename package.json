@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ArroyoDev-LLC/big3d-api#readme",
   "dependencies": {
-    "serverless": "^2.53.1"
+    "serverless": "^2.53.1",
+    "serverless-python-requirements": "^5.1.1"
   }
 }
