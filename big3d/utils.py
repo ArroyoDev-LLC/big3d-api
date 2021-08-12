@@ -2,7 +2,7 @@ import re
 
 
 def validate_incoming_data(*, incoming, args):
-    for arg in model_args:
+    for arg in args:
         if not arg in incoming:
             return False
         if not incoming[arg]:
