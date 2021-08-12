@@ -1,37 +1,65 @@
-FROM ghcr.io/arroyodev-llc/threedframe:latest as build
+# Define custom function directory
+ARG FUNCTION_DIR="/function"
+ARG PACKAGES_DIR="/packages"
 
-# Install Poetry
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python && \
-    cd /usr/local/bin && \
-    ln -s /opt/poetry/bin/poetry && \
-    poetry config virtualenvs.create false
+FROM ghcr.io/arroyodev-llc/threedframe:latest as build-image
 
-WORKDIR /app/
-COPY pyproject.toml poetry.lock* /app/
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
+ARG PACKAGES_DIR
 
-# Build wheel.
-RUN bash -c "poetry export --without-hashes -o requirements.txt && pip install -U pip && mkdir -p dist && pip wheel -w dist -r requirements.txt"
+# Install aws-lambda-cpp build dependencies
+RUN apt-get update && \
+  apt-get install -y \
+  g++ \
+  make \
+  cmake \
+  unzip \
+  libcurl4-openssl-dev \
+  git
 
-WORKDIR /wheels
-RUN bash -c "cp /app/dist/* /wheels/ && cp /app/requirements.txt /wheels/ && rm -rf /app"
+# Create function/packages dirs
+RUN mkdir -p ${FUNCTION_DIR} \
+    && mkdir -p ${PACKAGES_DIR} \
 
+# Copy function requirements.
+COPY requirements.txt .
 
-
-FROM public.ecr.aws/lambda/python:3.8
-
-# Copy OpenSCAD & Blender binaries
-COPY --from=build /usr/local/bin/openscad /usr/local/bin/openscad
-COPY --from=build /usr/local/blender /usr/local/blender
-
-# Copy fonts
-COPY --from=build /usr/share/fonts/truetype/ /usr/share/fonts/truetype/
-
-# Install api deps.
-COPY --from=build /wheels /wheels
+# Install the function's dependencies
+#: threedframe package lives @ /app
 RUN pip install --no-cache-dir -U pip \
-  && pip install --no-cache-dir -f /wheels/ -r /wheels/requirements.txt \
-  && rm -rf /wheels
+    && pip --no-cache-dir install \
+        --target ${PACKAGES_DIR} \
+          awslambdaric \
+          /app \
+          -r requirements.txt
 
-COPY . .
+# Copy rest of function code.
+COPY ./* ${FUNCTION_DIR}
 
-CMD ["handler.hello"]
+
+### Function handler stage.
+FROM python:3.8-buster
+
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
+ARG PACKAGES_DIR
+
+# Set working directory to function root directory
+WORKDIR ${FUNCTION_DIR}
+
+# Copy in the built dependencies
+COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
+COPY --from=build-image ${PACKAGES_DIR} ${PACKAGES_DIR}
+
+# Copy entrypoint.
+COPY ./scripts/docker-entry-point.sh /docker-entrypoint.sh
+COPY ./scripts/aws-lambda-rie /usr/local/bin/aws-lambda-rie
+
+# Lambdas only have write access @ /tmp
+ENV HOME "/tmp/big3d_api"
+# Direct python path to packages dir.
+ENV PYTHONPATH ${PACKAGES_DIR}
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD [ "handler.hello" ]
