@@ -8,7 +8,7 @@ from big3d.utils import validate_incoming_data
 
 
 def create_new_order(event, context):
-    print(event.get("body"))
+
     if not event.get("body", None):
         return {"errorCode": 404, "body": "Body not found"}
 

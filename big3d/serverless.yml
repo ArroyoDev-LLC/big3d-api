@@ -11,22 +11,166 @@ provider:
   lambdaHashingVersion: '20201221'
   stage: dev
   region: us-east-1
+  environment:
+    DYNAMODB_TABLE: "dynamodb-Big3D"
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
     binaryMediaTypes:
       - 'multipart/form-data'
+  iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+      -cognito-identity:*
+      -cognito-sync:*
+      -cognito-idp:*
+      -lambda:*
+    Resource:
+      -"*"
+
   ecr:
     images:
       big3d-api:
         path: ./
 
 functions:
-  hello:
+  works:
     image:
       name: big3d-api
+    handler: big3d/auth.auth_handler
     events:
       - http:
-          path: /
+          path: /works
           method: get
           cors: true
+
+  authCreateUser:
+    image:
+      name: big3d-api
+    handler: big3d/auth.create_new_user
+    environment:
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
+    events:
+      - cognitoUserPool:
+          pool: big3d-pool
+          trigger: PreSignUp_SignUp
+          existing: true
+      - http:
+          path: /user/create
+          method: post
+          cors: true
+  authUser:
+    image:
+      name: big3d-api
+    handler: big3d/auth.authenticate_user
+    environment:
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
+      CLIENT_SECRET: ${env:CLIENT_SECRET}
+    events:
+      - http:
+          path: /user/auth
+          method: get
+          cors: true
+
+  authForgotPassword:
+    image:
+      name: big3d-api
+    handler: big3d/auth.forgot_password
+    environment:
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
+    events:
+      - http:
+          path: /user/forgot
+          method: get
+          cors: true
+
+  authConfirmForgotPassword:
+    image:
+      name: big3d-api
+    handler: big3d/auth.confirm_forgot_password
+    environment:
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
+    events:
+      - http:
+          path: /user/confirm_forgot
+          method: get
+          cors: true
+
+  authUpdateUser:
+    image:
+      name: big3d-api
+    handler: big3d/auth.update_user
+    environment:
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
+    events:
+      - http:
+          path: /user/update
+          method: get
+          cors: true
+
+  authGetUser:
+    image:
+      name: big3d-api
+    handler: big3d/auth.get_user
+    environment:
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
+    events:
+      - http:
+          path: /user/get
+          method: get
+          cors: true
+
+  OrderCreate:
+    image:
+      name: big3d-api
+    handler: big3d/order.create_new_order
+    events:
+      - http:
+          path: /order/create
+          method: post
+          cors: true
+
+
+  OrderGet:
+    image:
+      name: big3d-api
+    handler: big3d/order.get_user_orders
+    events:
+      - http:
+          path: /order/{user_id}
+          method: get
+          cors: true
+
+
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
+  - serverless-dotenv-plugin
+
+
+resources:
+  Resources:
+    Big3DDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributionDefinition:
+        KeySchema:
+          -
+            AttributeName: order_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName:
+
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
