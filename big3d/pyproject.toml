@@ -23,6 +23,8 @@ typing-extensions = "^3.10.0"
 # via the base Dockerfile and seems to have issues
 # installing as normal.
 threedframe = {git = "https://github.com/arroyodev-llc/3dframe.git"}
+# Also installed in dockerfile.
+awslambdaric = "^1.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
