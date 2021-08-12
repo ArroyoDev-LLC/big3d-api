@@ -20,7 +20,7 @@ RUN apt-get update && \
 
 # Create function/packages dirs
 RUN mkdir -p ${FUNCTION_DIR} \
-    && mkdir -p ${PACKAGES_DIR} \
+    && mkdir -p ${PACKAGES_DIR}
 
 # Copy function requirements.
 COPY requirements.txt .
