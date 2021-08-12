@@ -13,7 +13,7 @@ class big3D_table(Model):
         host = "https://localhost:8000"
 
     order_id = UnicodeAttribute(hash_key=True)
-    user_id = UnicodeAttribute(sort_key=True)
+    user_id = UnicodeAttribute(range_key=True)
     created_at = UTCDateTimeAttribute()
     order_details = JSONAttribute()
 
