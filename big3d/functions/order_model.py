@@ -6,6 +6,10 @@ from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute, JSONAttr
 
 class OrderModel(BaseModel):
 
-    amount = UnicodeAttribute()
-    user = UnicodeAttribute()
-    details = JSONAttribute()
+    amount = UnicodeAttribute(hash_key=True)
+    user_id = UnicodeAttribute()
+    created_at = UTCDateTimeAttribute()
+
+    # Dump any additional information here,
+    # tracking number, static files, etc.
+    order_details = JSONAttribute()
