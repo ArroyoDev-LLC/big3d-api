@@ -1,8 +1,8 @@
 import uuid
 
 from datetime import datetime
-from pynamodb.model import Model
-from pyanmodb.attribute import UnicodeAttribute, UTCDateTimeAttribute, JSONAttribute
+from pynamodb.models import Model
+from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute, JSONAttribute
 
 from utils import validate_incoming_data
 
