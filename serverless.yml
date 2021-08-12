@@ -37,7 +37,8 @@ functions:
       name: big3d-api
     handler: big3d/auth.create_new_user
     environment:
-      USER_POOL_ID: ${env:USER_POOL_ID}
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
     events:
       - http:
           path: /user/create
@@ -48,7 +49,8 @@ functions:
       name: big3d-api
     handler: big3d/auth.authenticate_user
     environment:
-      USER_POOL_ID: ${env:USER_POOL_ID}
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
     events:
       - http:
           path: /user/auth
@@ -60,10 +62,24 @@ functions:
       name: big3d-api
     handler: big3d/auth.forgot_password
     environment:
-      USER_POOL_ID: ${env:USER_POOL_ID}
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
     events:
       - http:
           path: /user/forgot
+          method: get
+          cors: true
+
+  authConfirmForgotPassword:
+    image:
+      name: big3d-api
+    handler: big3d/auth.confirm_forgot_password
+    environment:
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
+    events:
+      - http:
+          path: /user/confirm_forgot
           method: get
           cors: true
 
@@ -72,10 +88,24 @@ functions:
       name: big3d-api
     handler: big3d/auth.update_user
     environment:
-      USER_POOL_ID: ${env:USER_POOL_ID}
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
     events:
       - http:
           path: /user/update
+          method: get
+          cors: true
+
+  authGetUser:
+    image:
+      name: big3d-api
+    handler: big3d/auth.get_user
+    environment:
+      USER_POOL_ID: ${param:USER_POOL_ID}
+      CLIENT_ID: ${param:CLIENT_ID}
+    events:
+      - http:
+          path: /user/get
           method: get
           cors: true
 
