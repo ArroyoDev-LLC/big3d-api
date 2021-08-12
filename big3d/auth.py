@@ -44,6 +44,9 @@ def create_new_user(event, context):
     u.confirm_sign_up("user_conf_code", username=data["username"])
 
 
+# event.headers['id_token']
+
+
 def authenticate_user(event, context):
     u = Cognito(USER_POOL_ID, email=event.get("email"))
 
@@ -60,3 +63,7 @@ def update_user(event, context):
     u = Cognito(USER_POOL_ID, event["body"].get("email"))
 
     u.update_profile(event["body"], attr_map=dict())
+
+
+def check_auth(event, context):
+    u = Cognito(USER_POOL_ID, id_token=event.headers["id_token"])
