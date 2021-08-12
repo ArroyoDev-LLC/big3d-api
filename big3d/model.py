@@ -7,7 +7,7 @@ from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute, JSONAttr
 from utils import validate_incoming_data
 
 
-class big3D_table(Base):
+class big3D_table(Model):
     class Meta:
         table_name = "dynamodb-big3D"
         host = "https://localhost:8000"
