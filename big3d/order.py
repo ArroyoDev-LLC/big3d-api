@@ -1,11 +1,17 @@
 import uuid
 import json
 
-from model import big3D_table
+from datetime import datetime
+
+from big3d.model import big3D_table
 from big3d.utils import validate_incoming_data
 
 
 def create_new_order(event, context):
+    print(event.get("body"))
+    if not event.get("body", None):
+        return {"errorCode": 404, "body": "Body not found"}
+
     data = json.loads(event["body"])
 
     if not validate_incoming_data(incoming=data, args=["user_id", "order_details"]):
@@ -20,8 +26,12 @@ def create_new_order(event, context):
 
     new_order.save()
 
+    return {"statusCode": 200, "body": json.dumps(dict(new_order))}
 
+
+# SSL Validation Error
 def get_user_orders(event, context):
-    results = big3d_table.scan(big3D_table.user_id == event["path"]["user_id"])
+    # I don't know why event['path'] is only returning a string
+    results = big3D_table.scan(big3D_table.user_id == event["path"][-36])
 
     return {"statusCode": 200, "body": json.dumps({"items": [dict(result) for result in results]})}
