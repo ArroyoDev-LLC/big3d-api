@@ -12,6 +12,8 @@ def validate_incoming_data(*, incoming, args):
 
 def validate_email(*, email_str):
     pattern = r"^[a-z]+[-_$.a-z]*@[a-z]*\.[a-z]+$"
-    match = re.match(pattern, "abc.xyz@gmail.com", re.IGNORECASE)
-
-    return match
+    match = re.match(pattern, email_str, re.IGNORECASE)
+    if match:
+        return True
+    else:
+        return False
