@@ -8,13 +8,6 @@ from big3d.utils import vaildate_incoming_data, validate_email
 USER_POOL_ID = os.environ("USER_POOL_ID")
 
 
-def validate_email(*, email_str):
-    pattern = r"^[a-z]+[-_$.a-z]*@[a-z]*\.[a-z]+$"
-    match = re.match(pattern, "abc.xyz@gmail.com", re.IGNORECASE)
-
-    return match
-
-
 def create_new_user(event, context):
     data = json.loads(event["body"])
 
@@ -52,18 +45,18 @@ def create_new_user(event, context):
 
 
 def authenticate_user(event, context):
-    u = Cognito(USER_POOL_ID, CLIENT_ID, email=event.get("email"))
+    u = Cognito(USER_POOL_ID, email=event.get("email"))
 
     u.authenticate(password=event.get("password"))
 
 
 def forgot_password(event, context):
-    u = Cognito(USER_POOL_ID, CLIENT_ID, email=event.get("email"))
+    u = Cognito(USER_POOL_ID, email=event.get("email"))
 
     u.initiate_forgot_password()
 
 
 def update_user(event, context):
-    u = Cognito(USER_POOL_ID, CLIENT_ID, event["body"].get("email"))
+    u = Cognito(USER_POOL_ID, event["body"].get("email"))
 
-    u.update_profile(event["body"], arrt_map=dict())
+    u.update_profile(event["body"], attr_map=dict())
