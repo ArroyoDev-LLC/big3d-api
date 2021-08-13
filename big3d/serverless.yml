@@ -22,11 +22,11 @@ provider:
         path: ./
 
 functions:
-  hello:
+  apiHandler:
     image:
       name: big3d-api
     events:
       - http:
-          path: /
-          method: get
+          path: /{proxy+}
+          method: ANY
           cors: true
