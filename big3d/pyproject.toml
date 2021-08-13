@@ -10,6 +10,10 @@ pynamodb = "^5.1.0"
 boto3 = "^1.18.18"
 pydantic = "^1.8.2"
 loguru = "^0.5.3"
+python-multipart = "^0.0.5"
+fastapi = "^0.68.0"
+uvicorn = "^0.14.0"
+mangum = "^0.12.2"
 
 [tool.poetry.dev-dependencies]
 autoflake = "^1.4"
@@ -25,6 +29,7 @@ typing-extensions = "^3.10.0"
 threedframe = {git = "https://github.com/arroyodev-llc/3dframe.git"}
 # Also installed in dockerfile.
 awslambdaric = "^1.2.0"
+ipython = "^7.26.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
