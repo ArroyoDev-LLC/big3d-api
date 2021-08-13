@@ -1,6 +1,7 @@
 # Define custom function directory
 ARG FUNCTION_DIR="/function"
 ARG PACKAGES_DIR="/packages"
+ARG IS_LOCAL=""
 
 FROM ghcr.io/arroyodev-llc/threedframe:latest as build-image
 
@@ -44,6 +45,7 @@ FROM python:3.8-buster
 # Include global arg in this stage of the build
 ARG FUNCTION_DIR
 ARG PACKAGES_DIR
+ARG IS_LOCAL
 
 # Open3D + OpenSCAD + Blender deps
 RUN curl -L -o /get-oscad-deps.sh https://raw.githubusercontent.com/openscad/openscad/openscad-2021.01/scripts/uni-get-dependencies.sh \
@@ -104,6 +106,8 @@ COPY ./scripts/aws-lambda-rie /usr/local/bin/aws-lambda-rie
 ENV HOME "/tmp/big3d_api"
 # Direct python path to packages dir.
 ENV PYTHONPATH ${PACKAGES_DIR}
+# Enable local development.
+ENV IS_LOCAL ${IS_LOCAL}
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD [ "handler.handler" ]
